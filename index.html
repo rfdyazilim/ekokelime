@@ -12,7 +12,7 @@
       margin: 0;
       padding: 20px;
     }
-    /* Üst logo: Boyutu 3 kat büyütüldü (150px) */
+    /* Üst logo: Boyutu 3 kat büyütüldü (örneğin, 150px yüksekliğe ayarlandı) */
     #logo {
       position: fixed;
       top: 10px;
@@ -68,10 +68,12 @@
       width: 80%;
       padding: 5px;
     }
-    /* Alt logo: sayfanın alt kısmında ortalanacak */
+    /* Alt logo: sayfanın sabit alt kısmında, ortalanmış */
     #bottomLogo {
-      display: block;
-      margin: 600px auto;
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
       height: 100px;
     }
   </style>
@@ -88,7 +90,7 @@
   <!-- Başlangıç ekranı: oyuncu sayısı ve isim girişleri -->
   <div id="startScreen">
     <label for="playerCount">Oyuncu Sayısını Seçin (1-5):</label>
-    <input type="number" id="playerCount" min="1" max="5" value="1" onchange="generatePlayerNameInputs()">
+    <input type="number" id="playerCount" min="1" max="5" value="1">
     <div id="playerNames"></div>
     <button onclick="startGame()">Oyunu Başlat</button>
   </div>
@@ -99,6 +101,11 @@
     <div id="questionArea"></div>
     <div id="scoreboard"></div>
   </div>
+
+  <!-- Alt logo: Sayfanın alt kısmında sabit kalsın -->
+  <footer>
+    <img src="images/altlogo.png" alt="Alt Logo" id="bottomLogo">
+  </footer>
 
   <script>
     // Global Değişkenler
@@ -133,6 +140,11 @@
       }
       return array;
     }
+
+    // Sayfa yüklendiğinde oyuncu isim inputlarını oluştur
+    window.onload = function() {
+      generatePlayerNameInputs();
+    };
 
     // Oyuncu isimleri input alanlarını oluştur
     function generatePlayerNameInputs() {
@@ -265,7 +277,6 @@
         for (let i = 0; i < currentAnswer.length; i++) {
           hintStr += revealedLetters[i] ? currentAnswer[i] + " " : "_ ";
         }
-        // Güncellenen ipucu doğrudan input'un placeholder'ına yansıtılıyor
         document.getElementById("answer").setAttribute("placeholder", hintStr.trim());
       } else {
         alert("Tüm harfler zaten açık!");
@@ -286,12 +297,10 @@
     function endRound() {
       clearInterval(timerInterval);
       let roundHTML = `<h2>${playerNames[currentPlayer]} için tur tamamlandı. Puanınız: ${scores[currentPlayer]}</h2>`;
-      // Eğer son oyuncu değilse, sonraki oyuncuya geçiş butonu göster
       if (currentPlayer < playerCount - 1) {
         roundHTML += `<button onclick="nextPlayer()">Sonraki Oyuncuya Geç</button>`;
         document.getElementById("gameArea").innerHTML = roundHTML;
       } else {
-        // Tüm oyuncular tamamlandığında oyunu bitir
         endGame();
       }
     }
@@ -430,11 +439,6 @@
       }
     };
   </script>
-
-  <!-- Alt logo: Sayfanın en alt kısmında -->
-  <footer>
-    <img src="images/altlogo.png" alt="Alt Logo" id="bottomLogo">
-  </footer>
 
 </body>
 </html>
