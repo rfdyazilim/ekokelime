@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <!-- Buraya ekleyin: -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ekolojik Kelime Oyunu</title>
   <style>
@@ -62,7 +63,7 @@
       border: none;
       border-bottom: 2px solid #000;
       font-size: 18px;
-      letter-spacing: 10px;
+      letter-spacing: 1px;
       background: transparent;
       text-align: center;
       width: 80%;
@@ -75,6 +76,24 @@
       left: 50%;
       transform: translateX(-50%);
       height: 100px;
+    }
+    
+    /* Aşağıdaki media query, mobil cihazlarda (max-width: 768px) kullanılacak stilleri ayarlar */
+    @media (max-width: 768px) {
+      body {
+        /* Arka plan mobilde daha iyi kaplamak için: */
+        background-size: cover;
+      }
+      #logo {
+        /* Logoyu mobilde daha küçük yapabilirsiniz */
+        height: 100px;
+        right: 10px;
+      }
+      button {
+        /* Butonları mobilde daha kullanışlı hale getirmek için */
+        padding: 8px 12px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -90,7 +109,7 @@
   <!-- Başlangıç ekranı: oyuncu sayısı ve isim girişleri -->
   <div id="startScreen">
     <label for="playerCount">Oyuncu Sayısını Seçin (1-5):</label>
-    <input type="number" id="playerCount" min="1" max="5" value="1">
+    <input type="number" id="playerCount" min="1" max="5" value="1" onchange="generatePlayerNameInputs()">
     <div id="playerNames"></div>
     <button onclick="startGame()">Oyunu Başlat</button>
   </div>
@@ -152,8 +171,10 @@
       let container = document.getElementById("playerNames");
       container.innerHTML = "";
       for (let i = 0; i < count; i++) {
-        container.innerHTML += `<label>Oyuncu ${i + 1} İsmi: </label>
-          <input type="text" id="playerName${i}" placeholder="İsim girin"><br>`;
+        container.innerHTML += `
+          <label>Oyuncu ${i + 1} İsmi: </label>
+          <input type="text" id="playerName${i}" placeholder="İsim girin"><br>
+        `;
       }
     }
 
@@ -236,7 +257,6 @@
       let questionObj = questionsList[currentRoundQuestionCount];
       currentAnswer = questionObj.word;
       revealedLetters = new Array(currentAnswer.length).fill(false);
-      // Alt çizgili placeholder oluştur: örn. "_ _ _ _"
       const underscorePlaceholder = "_ ".repeat(currentAnswer.length).trim();
       document.getElementById("questionArea").innerHTML = `
         <h2>${playerNames[currentPlayer]} - Kelime Tanımı (${questionObj.wordLength} harfli):</h2>
@@ -247,7 +267,7 @@
       `;
     }
 
-    // Cevabı kontrol etme (Türkçe karakter duyarlılığı için)
+    // Cevabı kontrol etme
     function checkAnswer(word) {
       const answer = document.getElementById("answer").value.trim();
       if (answer.toLocaleLowerCase("tr-TR") === word.toLocaleLowerCase("tr-TR")) {
@@ -261,7 +281,7 @@
       askQuestion();
     }
 
-    // Rastgele ipucu; her ipucu istendiğinde 100 puan eksilsin ve input'un placeholder'ı güncellensin
+    // İpucu isteme
     function requestHint() {
       scores[currentPlayer] -= 100;
       updateScoreboard();
@@ -283,7 +303,7 @@
       }
     }
 
-    // Skor panosunu güncelle
+    // Skor panosunu güncelleme
     function updateScoreboard() {
       let scoreboardHTML = `<h2>Skorlar:</h2><ul>`;
       for (let i = 0; i < playerCount; i++) {
@@ -293,7 +313,7 @@
       document.getElementById("scoreboard").innerHTML = scoreboardHTML;
     }
 
-    // Oyuncunun turunu bitir (14 soru veya süre bitince)
+    // Tur bitirme
     function endRound() {
       clearInterval(timerInterval);
       let roundHTML = `<h2>${playerNames[currentPlayer]} için tur tamamlandı. Puanınız: ${scores[currentPlayer]}</h2>`;
@@ -333,7 +353,7 @@
       timeRemaining--;
     }
 
-    // Oyun tamamlandığında final sıralaması ve kazananı göster
+    // Oyun sonu ekranı
     function endGame() {
       clearInterval(timerInterval);
       let ranking = [];
